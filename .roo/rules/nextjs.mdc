@@ -1,0 +1,17 @@
+---
+description: Best Practices for Next.js
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+Syntax and Formatting:
+- Use the "function" keyword for pure functions.
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
+- Use declarative TSX.
+
+Next.js Specifics:
+- Take advantage of Next.js file-based routing system for simplicity
+- Centralize shared layouts in `layout.tsx` for consistency across pages
+- Implement custom error pages with `error.tsx` to handle errors gracefully
+- Store shared logic in `lib/` or `util/`.
+- Place static assets in `public/`.
+- Use [layout.tsx](mdc:src/app/layout.tsx) for global layout.
