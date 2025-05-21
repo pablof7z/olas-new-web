@@ -1,12 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { NDKEvent, NDKImage } from '@nostr-dev-kit/ndk';
 import { useProfileValue } from '@nostr-dev-kit/ndk-hooks';
-import { X } from 'lucide-react';
-import React from 'react';
+import { Heart, MessageCircle, Repeat2, Share2, X } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import styles from './ImagePostModal.module.css';
 import { UserAvatar } from './UserAvatar';
 
 interface ImagePostModalProps {
@@ -15,17 +14,12 @@ interface ImagePostModalProps {
     event: NDKEvent;
 }
 
-// Helper function to extract image URL from event
 function getImageUrlFromEvent(event: NDKEvent): string | undefined {
-    if (event instanceof NDKImage) {
-        return event.imetas?.[0].url;
+    if (event instanceof NDKImage && event.imetas && event.imetas[0] && event.imetas[0].url) {
+        return event.imetas[0].url;
     }
-
-    // 1. Check 'image' tag
     let imageUrl = event.tags.find((tag) => tag[0] === 'image')?.[1];
     if (imageUrl) return imageUrl;
-
-    // 2. Check 'url' tag (often used in kind 1063 for file metadata)
     imageUrl = event.tags.find((tag) => tag[0] === 'url')?.[1];
     if (imageUrl) {
         const mimeType = event.tags.find((tag) => tag[0] === 'm')?.[1];
@@ -33,16 +27,11 @@ function getImageUrlFromEvent(event: NDKEvent): string | undefined {
             return imageUrl;
         }
     }
-
-    // 3. Check for markdown image in content (e.g., ![alt](url))
     const markdownMatch = event.content.match(/!\[.*?\]\((.*?)\)/);
     if (markdownMatch && markdownMatch[1]) return markdownMatch[1];
-
-    // 4. Check for direct image URL in content
     const urlRegex = /(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp))/gi;
     const contentMatch = event.content.match(urlRegex);
     if (contentMatch && contentMatch[0]) return contentMatch[0];
-
     return undefined;
 }
 
@@ -50,88 +39,124 @@ export function ImagePostModal({ isOpen, onClose, event }: ImagePostModalProps) 
     const authorProfile = useProfileValue(event.pubkey);
     const imageUrl = getImageUrlFromEvent(event);
     const timestamp = event.created_at ? new Date(event.created_at * 1000).toLocaleString() : 'N/A';
+    const modalRef = useRef<HTMLDivElement>(null);
 
-    return (
-        <Dialog
-            open={isOpen}
-            onOpenChange={(openStatus: boolean) => {
-                if (!openStatus) onClose();
-            }}
-        >
-            <DialogContent className="max-w-4xl w-[90vw] md:w-full h-[80vh] p-0 flex flex-col sm:flex-row overflow-hidden">
-                <DialogClose asChild className="absolute top-2 right-2 z-50">
-                    <Button variant="ghost" size="icon" aria-label="Close">
-                        <X className="h-5 w-5" />
-                    </Button>
-                </DialogClose>
+    // Trap focus and close on ESC
+    useEffect(() => {
+        if (!isOpen) return;
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Escape') onClose();
+        }
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onClose]);
 
-                {/* Left Side: Image */}
-                <div className="w-full sm:w-[60%] md:w-2/3 h-1/2 sm:h-full bg-black flex items-center justify-center overflow-hidden">
-                    {imageUrl ? (
-                        <img
-                            src={imageUrl}
-                            alt={event.content.substring(0, 100) || 'Nostr Image Post'}
-                            className="max-h-full max-w-full object-contain"
-                        />
-                    ) : (
-                        <div className="text-white p-4 text-center">Image not found or format not supported.</div>
-                    )}
-                </div>
+    // Prevent background scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
-                {/* Right Side: Post Details */}
-                <div className="w-full sm:w-[40%] md:w-1/3 h-1/2 sm:h-full flex flex-col p-4 md:p-6 overflow-y-auto border-t sm:border-t-0 sm:border-l border-border">
-                    {/* Author Info */}
-                    <div className="flex items-center mb-4 flex-shrink-0">
-                        <UserAvatar pubkey={event.pubkey} className="h-10 w-10 mr-3" />
-                        <div>
-                            <p
-                                className="font-semibold text-sm truncate"
-                                title={authorProfile?.name || authorProfile?.displayName || event.pubkey}
+    if (!isOpen) return null;
+
+    return createPortal(
+        <div className={styles.modalRoot} ref={modalRef} tabIndex={-1} aria-modal="true" role="dialog">
+            <button className={styles.closeButton} aria-label="Close" onClick={onClose} type="button">
+                <X size={24} />
+            </button>
+            <div className={styles.centeredImageContainer}>
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={event.content.substring(0, 100) || 'Nostr Image Post'}
+                        className={styles.centeredImage}
+                    />
+                ) : (
+                    <div style={{ color: '#fff', textAlign: 'center', padding: 24 }}>
+                        Image not found or format not supported.
+                    </div>
+                )}
+            </div>
+            <aside className={styles.sidebar}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
+                    <UserAvatar pubkey={event.pubkey} className="h-10 w-10" />
+                    <div style={{ marginLeft: 12 }}>
+                        <div
+                            style={{
+                                fontWeight: 600,
+                                fontSize: 15,
+                                lineHeight: 1.2,
+                                marginBottom: 2,
+                                color: '#fff',
+                                maxWidth: 180,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                            title={authorProfile?.name || authorProfile?.displayName || event.pubkey}
+                        >
+                            {authorProfile?.name || authorProfile?.displayName || event.pubkey.substring(0, 10) + '...'}
+                        </div>
+                        {authorProfile?.nip05 && (
+                            <div
+                                style={{
+                                    fontSize: 12,
+                                    color: '#bdbdbd',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}
+                                title={authorProfile.nip05}
                             >
-                                {authorProfile?.name ||
-                                    authorProfile?.displayName ||
-                                    event.pubkey.substring(0, 10) + '...'}
-                            </p>
-                            {authorProfile?.nip05 && (
-                                <p className="text-xs text-muted-foreground truncate" title={authorProfile.nip05}>
-                                    {authorProfile.nip05}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Post Content */}
-                    {event.content && (
-                        <p className="text-sm mb-4 whitespace-pre-wrap break-words flex-shrink-0">{event.content}</p>
-                    )}
-
-                    {/* Timestamp */}
-                    <p className="text-xs text-muted-foreground mb-6 flex-shrink-0">{timestamp}</p>
-
-                    {/* Interactions (Placeholder) */}
-                    <div className="mb-6 flex-shrink-0">
-                        <h3 className="text-xs font-medium text-muted-foreground mb-1">INTERACTIONS</h3>
-                        <div className="flex space-x-4 text-xs">
-                            <span>Likes: N/A</span>
-                            <span>Comments: N/A</span>
-                        </div>
-                    </div>
-
-                    {/* Comments Section (Placeholder) */}
-                    <div className="flex-grow mb-4 border-t pt-4 mt-4 border-border">
-                        <h3 className="text-xs font-medium text-muted-foreground mb-2">COMMENTS</h3>
-                        <div className="text-sm text-muted-foreground italic">Comments will appear here.</div>
-                    </div>
-
-                    {/* Add Comment Input (Placeholder) */}
-                    <div className="mt-auto pt-4 border-t border-border flex-shrink-0">
-                        <div className="flex space-x-2">
-                            <Input type="text" placeholder="Write a comment..." className="flex-grow" />
-                            <Button size="sm">Post</Button>
-                        </div>
+                                {authorProfile.nip05}
+                            </div>
+                        )}
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+                {event.content && (
+                    <div style={{ fontSize: 15, marginBottom: 18, color: '#e0e0e0', wordBreak: 'break-word' }}>
+                        {event.content}
+                    </div>
+                )}
+                <div style={{ fontSize: 13, color: '#bdbdbd', marginBottom: 18 }}>{timestamp}</div>
+                <div className={styles.interactions}>
+                    <span className={styles.interactionIcon} title="Like">
+                        <Heart size={18} strokeWidth={1.5} />
+                        <span>0</span>
+                    </span>
+                    <span className={styles.interactionIcon} title="Comments">
+                        <MessageCircle size={18} strokeWidth={1.5} />
+                        <span>0</span>
+                    </span>
+                    <span className={styles.interactionIcon} title="Repost">
+                        <Repeat2 size={18} strokeWidth={1.5} />
+                        <span>0</span>
+                    </span>
+                    <span className={styles.interactionIcon} title="Share">
+                        <Share2 size={18} strokeWidth={1.5} />
+                    </span>
+                </div>
+                <div className={styles.commentsSection}>
+                    <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: '#bdbdbd' }}>Comments</div>
+                    <div style={{ fontSize: 14, color: '#888', fontStyle: 'italic' }}>Comments will appear here.</div>
+                </div>
+                <form className={styles.addComment} onSubmit={(e) => e.preventDefault()}>
+                    <input
+                        type="text"
+                        placeholder="Write a comment..."
+                        aria-label="Write a comment"
+                        autoComplete="off"
+                    />
+                    <button type="submit">Post</button>
+                </form>
+            </aside>
+        </div>,
+        typeof window !== 'undefined' ? document.body : (null as any)
     );
 }
