@@ -7,6 +7,10 @@ Guidelines:
 - Try to produce components as reusable as possible.
 
 # File Inventory
+
+
+
+
 - [`src/app/globals.css`](src/app/globals.css:0): Global CSS styles.
 - [`src/app/layout.tsx`](src/app/layout.tsx:0): Root layout for the Next.js application, includes NDKHeadless setup.
 - [`src/app/p/[npub]/layout.tsx`](src/app/p/[npub]/layout.tsx:0): Layout for the user profile page, includes Hero and Tabs.
