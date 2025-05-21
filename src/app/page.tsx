@@ -2,12 +2,27 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { Sidebar } from '@/features/sidebar/components/Sidebar';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { NDKImage, NDKKind, useSubscribe } from '@nostr-dev-kit/ndk-hooks';
+import { useMemo } from 'react';
 
 export default function Home() {
-    const { events } = useSubscribe<NDKImage>([{ kinds: [NDKKind.Image] }], { wrap: true }); // Added limit for better display
+    const { events } = useSubscribe<NDKImage>([{ kinds: [NDKKind.Image], limit: 50 }], { wrap: true }); // Added limit for better display
+
+    const hashtags = useMemo(() => {
+        const allTags = events.flatMap((e) => e.getMatchingTags('t').map((t) => t[1]));
+        // sorted by count
+        const tagCounts = allTags.reduce((acc, tag) => {
+            acc[tag] = (acc[tag] || 0) + 1;
+            return acc;
+        }, {});
+        return Object.entries(tagCounts)
+            .sort(([, countA], [, countB]) => countB - countA)
+            .slice(0, 9)
+            .map(([tag]) => tag);
+    }, [events]);
 
     const itemData = events.map((event, index) => {
         let cols = 1;
@@ -39,36 +54,42 @@ export default function Home() {
     });
 
     return (
-        <main style={{ display: 'flex', justifyContent: 'center' }}>
-            {events.length > 0 ? (
-                <ImageList
-                    sx={{ height: 'auto', minHeight: 450 }} // Adjusted width/height
-                    variant="quilted"
-                    className="w-full"
-                    cols={6} // Number of columns in the grid
-                    rowHeight={200} // Base height of a row
-                    gap={4} // Gap between items
-                >
-                    {itemData.map((item) => (
-                        <ImageListItem key={item.id} cols={item.cols || 1} rows={item.rows || 1}>
-                            {item.img && (
-                                <a href={`/p/${item.event.author.npub}`}>
-                                    <img
-                                        src={item.img}
-                                        width={121 * (item.cols || 1)} // Calculate width based on cols
-                                        height={121 * (item.rows || 1)} // Calculate height based on rows
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes, adjust as needed
-                                        loading="lazy"
-                                        className="object-cover w-full h-full" // Ensure image covers the list item
-                                    />
-                                </a>
-                            )}
-                        </ImageListItem>
-                    ))}
-                </ImageList>
-            ) : (
-                <p>No images found or still loading...</p> // Display message if no events
-            )}
-        </main>
+        <div className="flex flex-col md:flex-row gap-6 w-full">
+            <main className="flex-grow">
+                {events.length > 0 ? (
+                    <ImageList
+                        sx={{ height: 'auto', minHeight: 450 }}
+                        variant="quilted"
+                        cols={6} // Reduced columns to make room for sidebar
+                        rowHeight={200}
+                        gap={4}
+                    >
+                        {itemData.map((item) => (
+                            <ImageListItem key={item.id} cols={item.cols || 1} rows={item.rows || 1}>
+                                {item.img && (
+                                    <a href={`/p/${item.event.author.npub}`}>
+                                        <img
+                                            src={item.img}
+                                            width={121 * (item.cols || 1)}
+                                            height={121 * (item.rows || 1)}
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            loading="lazy"
+                                            className="object-cover w-full h-full"
+                                        />
+                                    </a>
+                                )}
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                ) : (
+                    <div className="flex items-center justify-center h-96">
+                        <p className="text-muted-foreground">No images found or still loading...</p>
+                    </div>
+                )}
+            </main>
+            <div className="w-[300px] flex-shrink-0 md:sticky md:top-20 h-fit">
+                <Sidebar hashtags={hashtags} />
+            </div>
+        </div>
     );
 }
