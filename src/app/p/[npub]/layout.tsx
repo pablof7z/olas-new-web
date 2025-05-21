@@ -92,11 +92,11 @@ function ProfileLayoutContent({ children, currentPathname }: ProfileLayoutProps 
                 profile={profile ?? undefined}
                 npub={user.npub}
                 pubkey={user.pubkey}
-                containerClassName="max-w-5xl mx-auto"
+                containerClassName="max-w-3xl mx-auto"
             />
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full !mt-10">
+            <div className="max-w-3xl mx-auto w-full !mt-10">
                 <ProfileTabs npub={npubFromParams} currentPathname={currentPathname} />
-                <main className="container px-4 py-8">{children}</main>
+                <main className="container py-8">{children}</main>
             </div>
         </div>
     );

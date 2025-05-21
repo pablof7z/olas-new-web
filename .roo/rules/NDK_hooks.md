@@ -103,6 +103,9 @@ if (user) setUser(user)
 })
 })
 
+## Related events
+To get events related to some other events, use a filter like `{ kinds: [<desired-kinds>], ...event.filter() }`. This will create the right nostr filter to retrieve the desired kinds. Typically you'd use this with useSubscribe([{ ...event.filter() }]) will provide everything related to a post (zaps, comments, reactions, etc).
+
 ## Encoding events
 
 similarly, events have an id, which is always individual. When requiring a stable ID of an event (for example if referring to an event of type NDKArticle, which might be edited) we usually want to refer to it via it's stable id, `event.tagId()`.

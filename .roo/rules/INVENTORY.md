@@ -1,34 +1,43 @@
-Keep an inventory of all code files with a one-liner of the role. Only include code files (src/ directory) in the inventory. Whenever you notice a discrepancy, or when you create/delete files, update this inventory. This is your map and should always be accurate.
+Maintain an accurate inventory of all code files within the `src/` directory, providing a concise one-line summary clearly stating each file's responsibility and scope. Immediately update this inventory whenever you create, significantly modify, or delete files.
 
-Guidelines:
+**Inventory Guidelines**
 
-- Code always goes in src/
-- Organize by features: src/features/{hooks,stores,components,utils} -- only create the directories when they are needed; i.e. don't preemptively create a "stores" component if the feature doesn't REALLY require one.
-- Try to produce components as reusable as possible.
+- **Clearly state the file's purpose:** Each entry should explicitly describe what the file does, its main responsibility, and scope.
+- **Avoid vagueness:** Entries must precisely communicate responsibilities and usage context to enable quick understanding by other LLMs without additional context.
 
-# File Inventory
+### Inventory
 
-- [`src/app/globals.css`](src/app/globals.css:0): Global CSS styles.
-- [`src/app/layout.tsx`](src/app/layout.tsx:0): Root layout for the Next.js application, includes NDKHeadless setup.
-- [`src/app/p/[npub]/layout.tsx`](src/app/p/[npub]/layout.tsx:0): Layout for the user profile page, includes Hero and Tabs.
-- [`src/app/p/[npub]/page.tsx`](src/app/p/[npub]/page.tsx:0): Default page for user profile, displays "Posts" section.
-- [`src/app/p/[npub]/updates/page.tsx`](src/app/p/[npub]/updates/page.tsx:0): Page for user profile "Updates" section.
-- [`src/app/page.module.css`](src/app/page.module.css:0): CSS modules for the landing page.
-- [`src/app/page.tsx`](src/app/page.tsx:0): Landing page, displays a Nostr event feed and sidebar.
-- [`src/components/ui/avatar.tsx`](src/components/ui/avatar.tsx:0): Shadcn/ui Avatar component.
-- [`src/components/ui/badge.tsx`](src/components/ui/badge.tsx:0): Shadcn/ui Badge component.
-- [`src/components/ui/button.tsx`](src/components/ui/button.tsx:0): Shadcn/ui Button component.
-- [`src/components/ui/card.tsx`](src/components/ui/card.tsx:0): Shadcn/ui Card component.
-- [`src/components/ui/checkbox.tsx`](src/components/ui/checkbox.tsx:0): Shadcn/ui Checkbox component.
-- [`src/components/ui/dialog.tsx`](src/components/ui/dialog.tsx:0): Shadcn/ui Dialog component.
-- [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx:0): Shadcn/ui Dropdown Menu component.
-- [`src/components/ui/input.tsx`](src/components/ui/input.tsx:0): Shadcn/ui Input component.
-- [`src/components/ui/tabs.tsx`](src/components/ui/tabs.tsx:0): Shadcn/ui Tabs component.
-- [`src/features/navigation/components/SiteHeader.tsx`](src/features/navigation/components/SiteHeader.tsx:0): Site-wide navigation header component.
-- [`src/features/navigation/components/Sidebar.tsx`](src/features/navigation/components/Sidebar.tsx:0): Collapsed sidebar navigation for the app layout, includes Olas icon, Explore, new post, and avatar.
-- [`src/features/nostr/components/CardHeader.tsx`](src/features/nostr/components/CardHeader.tsx:0): Component for displaying the header of a Nostr event card.
-- [`src/features/nostr/components/ImageEventCard.tsx`](src/features/nostr/components/ImageEventCard.tsx:0): Component for displaying a Nostr image event in a card format.
-- [`src/features/nostr/components/ImageEventGridItem.tsx`](src/features/nostr/components/ImageEventGridItem.tsx:0): Component to display a single Nostr image event in a grid.
-- [`src/features/nostr/components/ImagePostModal.tsx`](src/features/nostr/components/ImagePostModal.tsx:0): Modal component for displaying a Nostr image post with details.
-- [`src/features/nostr/components/UserAvatar.tsx`](src/features/nostr/components/UserAvatar.tsx:0): Component for displaying a user's avatar, typically from Nostr profile.
-- [`src/features/profile/components/ImagePostGridItem.tsx`](src/features/profile/components/ImagePostGridItem.tsx:0): Component to display a single image in the profile posts grid.
+```
+src/
+├── app/favicon.ico  # Application favicon for browser tab icon
+├── app/globals.css  # Global CSS variables, color schemes, and base styles for the app
+├── app/layout.tsx  # Root layout component providing global structure, theme, sidebar, and NDK session context
+├── app/page.module.css  # Scoped CSS styles for the main page layout, grid, and responsive design
+├── app/page.tsx  # Home page displaying a quilted grid of Nostr images and trending hashtags sidebar
+├── app/p/[npub]/layout.tsx  # Layout and context provider for user profile pages, resolving npub/NIP-05 and rendering profile header/tabs
+├── app/p/[npub]/page.tsx  # User profile posts page showing a grid of image and text events for the user
+├── app/p/[npub]/updates/page.tsx  # Placeholder component for the updates section of a user's profile
+├── components/ui/avatar.tsx  # Avatar component set for displaying user images or initials
+├── components/ui/badge.tsx  # Badge component for inline status or category labels with variant styling
+├── components/ui/button.tsx  # Button component with multiple variants and sizes for consistent UI
+├── components/ui/card.tsx  # Card component set for displaying content in styled, sectioned cards
+├── components/ui/checkbox.tsx  # Styled Checkbox component using Radix UI primitives
+├── components/ui/dialog.tsx  # Dialog/modal component set with overlay, content, and close functionality
+├── components/ui/dropdown-menu.tsx  # DropdownMenu component set for accessible, styled dropdowns with groups, items, and submenus
+├── components/ui/input.tsx  # Styled Input component for consistent text input fields
+├── components/ui/tabs.tsx  # Tabs component set for accessible, styled tabbed interfaces
+├── features/navigation/components/Sidebar.tsx  # Main vertical sidebar for navigation, theme toggling, and avatar access
+├── features/navigation/components/ThemeProvider.tsx  # React context/provider for managing and toggling light/dark theme
+├── features/nostr/components/CardHeader.tsx  # EventCardHeader component displaying event author info, timestamp, and actions
+├── features/nostr/components/ImageEventCard.tsx  # ImageEventCard component rendering a Nostr image event in a card with modal preview
+├── features/nostr/components/ImageEventGridItem.tsx  # ImageEventGridItem component rendering a single image for use in image grids
+├── features/nostr/components/ImagePostModal.module.css  # CSS styles for the image post modal, including layout and responsive design
+├── features/nostr/components/ImagePostModal.tsx  # ImagePostModal component rendering a modal with image, author info, and comments
+├── features/nostr/components/UserAvatar.tsx  # UserAvatar component rendering a user's avatar image or initials from Nostr profile
+├── features/profile/components/ImagePostGridItem.tsx  # ImagePostGridItem for clickable images in profile grid, opening modal with event details
+├── features/profile/components/ProfileHero.tsx  # ProfileHero component displaying user's banner, avatar, name, NIP-05, and about section
+├── features/profile/components/ProfileTabs.tsx  # ProfileTabs component rendering tab navigation for posts and updates
+├── features/sidebar/components/Sidebar.tsx  # Sidebar component for desktop, displaying trending hashtags and users
+├── features/sidebar/components/TrendingHashtags.tsx  # TrendingHashtags component displaying a list of trending hashtags as links
+├── features/sidebar/components/TrendingUsers.tsx  # TrendingUsers component displaying a list of most active users based on Nostr events
+├── lib/utils.ts  # Utility function for merging Tailwind and clsx class names
