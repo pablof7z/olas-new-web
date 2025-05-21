@@ -56,7 +56,7 @@ export default function Home() {
     return (
         <div className="flex flex-col md:flex-row gap-6 w-full">
             <main className="flex-grow">
-                {events.length > 0 ? (
+                <div className=" h-screen overflow-clip">
                     <ImageList
                         sx={{ height: 'auto', minHeight: 450 }}
                         variant="quilted"
@@ -81,11 +81,7 @@ export default function Home() {
                             </ImageListItem>
                         ))}
                     </ImageList>
-                ) : (
-                    <div className="flex items-center justify-center h-96">
-                        <p className="text-muted-foreground">No images found or still loading...</p>
-                    </div>
-                )}
+                </div>
             </main>
             <div className="w-[300px] flex-shrink-0 md:sticky md:top-20 h-fit">
                 <Sidebar hashtags={hashtags} />

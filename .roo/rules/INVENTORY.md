@@ -8,9 +8,6 @@ Guidelines:
 
 # File Inventory
 
-
-
-
 - [`src/app/globals.css`](src/app/globals.css:0): Global CSS styles.
 - [`src/app/layout.tsx`](src/app/layout.tsx:0): Root layout for the Next.js application, includes NDKHeadless setup.
 - [`src/app/p/[npub]/layout.tsx`](src/app/p/[npub]/layout.tsx:0): Layout for the user profile page, includes Hero and Tabs.
@@ -28,6 +25,7 @@ Guidelines:
 - [`src/components/ui/input.tsx`](src/components/ui/input.tsx:0): Shadcn/ui Input component.
 - [`src/components/ui/tabs.tsx`](src/components/ui/tabs.tsx:0): Shadcn/ui Tabs component.
 - [`src/features/navigation/components/SiteHeader.tsx`](src/features/navigation/components/SiteHeader.tsx:0): Site-wide navigation header component.
+- [`src/features/navigation/components/Sidebar.tsx`](src/features/navigation/components/Sidebar.tsx:0): Collapsed sidebar navigation for the app layout, includes Olas icon, Explore, new post, and avatar.
 - [`src/features/nostr/components/CardHeader.tsx`](src/features/nostr/components/CardHeader.tsx:0): Component for displaying the header of a Nostr event card.
 - [`src/features/nostr/components/ImageEventCard.tsx`](src/features/nostr/components/ImageEventCard.tsx:0): Component for displaying a Nostr image event in a card format.
 - [`src/features/nostr/components/ImageEventGridItem.tsx`](src/features/nostr/components/ImageEventGridItem.tsx:0): Component to display a single Nostr image event in a grid.

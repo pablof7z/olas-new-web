@@ -1,7 +1,7 @@
 'use client';
 
 // Required for useRef
-import { SiteHeader } from '@/features/navigation/components/SiteHeader';
+import { Sidebar } from '@/features/navigation/components/Sidebar';
 import { NDKHeadless, NDKSessionLocalStorage, useNDK } from '@nostr-dev-kit/ndk-hooks';
 import { Inter } from 'next/font/google';
 import { useEffect, useRef } from 'react';
@@ -34,8 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         opts: { follows: true, profile: true },
                     }}
                 />
-                <SiteHeader />
-                {children}
+                <Sidebar />
+                <main className="ml-16">{children}</main>
             </body>
         </html>
     );

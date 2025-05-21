@@ -1,158 +1,170 @@
 .modalRoot {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background: rgba(18, 18, 20, 0.92);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  overscroll-behavior: contain;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: rgba(18, 18, 20, 0.92);
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        'Helvetica Neue',
+        Arial,
+        sans-serif;
+    overscroll-behavior: contain;
 }
 
 .centeredImageContainer {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100vw;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
 }
 
 .centeredImage {
-  max-width: 100%;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: none;
-  background: transparent;
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: none;
+    background: transparent;
 }
 
 .sidebar {
-  width: 400px;
-  max-width: 100vw;
-  height: 100vh;
-  background: rgba(24, 24, 28, 0.98);
-  color: #f3f3f3;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid rgba(60,60,60,0.18);
-  padding: 32px 24px 24px 24px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  font-size: 15px;
-  font-family: inherit;
+    width: 400px;
+    max-width: 100vw;
+    height: 100vh;
+    background: rgba(24, 24, 28, 0.98);
+    color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(60, 60, 60, 0.18);
+    padding: 32px 24px 24px 24px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    font-size: 15px;
+    font-family: inherit;
 }
 
 .closeButton {
-  position: absolute;
-  top: 24px;
-  right: 32px;
-  background: none;
-  border: none;
-  color: #fff;
-  opacity: 0.7;
-  cursor: pointer;
-  z-index: 1100;
-  padding: 8px;
-  border-radius: 50%;
-  transition: background 0.15s, opacity 0.15s;
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    background: none;
+    border: none;
+    color: #fff;
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 1100;
+    padding: 8px;
+    border-radius: 50%;
+    transition:
+        background 0.15s,
+        opacity 0.15s;
 }
 .closeButton:hover {
-  background: rgba(255,255,255,0.08);
-  opacity: 1;
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 1;
 }
 
 @media (max-width: 900px) {
-  .modalRoot {
-    flex-direction: column;
-  }
-  .centeredImageContainer {
-    max-width: 100vw;
-    max-height: 60vh;
-    height: 60vh;
-  }
-  .sidebar {
-    position: static;
-    width: 100vw;
-    height: auto;
-    min-height: 40vh;
-    max-height: 40vh;
-    border-left: none;
-    border-top: 1px solid rgba(60,60,60,0.18);
-    padding: 20px 12px 12px 12px;
-    font-size: 14px;
-  }
-  .closeButton {
-    top: 12px;
-    right: 16px;
-  }
+    .modalRoot {
+        flex-direction: column;
+    }
+    .centeredImageContainer {
+        max-width: 100vw;
+        max-height: 60vh;
+        height: 60vh;
+    }
+    .sidebar {
+        position: static;
+        width: 100vw;
+        height: auto;
+        min-height: 40vh;
+        max-height: 40vh;
+        border-left: none;
+        border-top: 1px solid rgba(60, 60, 60, 0.18);
+        padding: 20px 12px 12px 12px;
+        font-size: 14px;
+    }
+    .closeButton {
+        top: 12px;
+        right: 16px;
+    }
 }
 
 .interactions {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 18px;
-  align-items: center;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 18px;
+    align-items: center;
 }
 .interactionIcon {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #bdbdbd;
-  font-size: 16px;
-  cursor: pointer;
-  opacity: 0.85;
-  transition: color 0.15s, opacity 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #bdbdbd;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.85;
+    transition:
+        color 0.15s,
+        opacity 0.15s;
 }
 .interactionIcon:hover {
-  color: #fff;
-  opacity: 1;
+    color: #fff;
+    opacity: 1;
 }
 
 .commentsSection {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  margin-bottom: 18px;
-  padding-right: 2px;
-  border-radius: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    margin-bottom: 18px;
+    padding-right: 2px;
+    border-radius: 0;
 }
 .comment {
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(60,60,60,0.10);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(60, 60, 60, 0.1);
 }
 .comment:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .addComment {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
 }
 .addComment input {
-  flex: 1 1 auto;
-  background: #23232a;
-  border: 1px solid #35353c;
-  color: #f3f3f3;
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-size: 15px;
+    flex: 1 1 auto;
+    background: #23232a;
+    border: 1px solid #35353c;
+    color: #f3f3f3;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 15px;
 }
 .addComment button {
-  background: #23232a;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.15s;
+    background: #23232a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s;
 }
 .addComment button:hover {
-  background: #35353c;
+    background: #35353c;
 }
