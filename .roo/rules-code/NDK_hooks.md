@@ -104,6 +104,7 @@ if (user) setUser(user)
 })
 
 ## Related events
+
 To get events related to some other events, use a filter like `{ kinds: [<desired-kinds>], ...event.filter() }`. This will create the right nostr filter to retrieve the desired kinds. Typically you'd use this with useSubscribe([{ ...event.filter() }]) will provide everything related to a post (zaps, comments, reactions, etc).
 
 ## Encoding events

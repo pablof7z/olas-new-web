@@ -25,6 +25,7 @@ src/
 ├── components/ui/dialog.tsx  # Dialog/modal component set with overlay, content, and close functionality
 ├── components/ui/dropdown-menu.tsx  # DropdownMenu component set for accessible, styled dropdowns with groups, items, and submenus
 ├── components/ui/input.tsx  # Styled Input component for consistent text input fields
+├── components/ui/RelativeTimeDisplay.tsx  # RelativeTimeDisplay component for showing auto-updating human-readable relative time (e.g., "3 days ago", "in 2 hours") for a given date
 ├── components/ui/tabs.tsx  # Tabs component set for accessible, styled tabbed interfaces
 ├── features/navigation/components/Sidebar.tsx  # Main vertical sidebar for navigation, theme toggling, and avatar access
 ├── features/navigation/components/ThemeProvider.tsx  # React context/provider for managing and toggling light/dark theme
@@ -40,4 +41,6 @@ src/
 ├── features/sidebar/components/Sidebar.tsx  # Sidebar component for desktop, displaying trending hashtags and users
 ├── features/sidebar/components/TrendingHashtags.tsx  # TrendingHashtags component displaying a list of trending hashtags as links
 ├── features/sidebar/components/TrendingUsers.tsx  # TrendingUsers component displaying a list of most active users based on Nostr events
+├── features/post-editor/components/PostEditor.tsx  # PostEditor component for creating new posts, featuring user avatar/name, drag-and-drop/click-to-upload image functionality with main preview and carousel for multiple images, a borderless caption input, and post scheduling with date/time selection and relative time display.
 ├── lib/utils.ts  # Utility function for merging Tailwind and clsx class names
+```

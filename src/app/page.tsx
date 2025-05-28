@@ -1,16 +1,37 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { FeedSidebar } from '@/features/feed/components/FeedSidebar';
+import { FollowPackCard } from '@/features/follow-packs/components/FollowPackCard';
+import { ImagePostModal } from '@/features/nostr/components/ImagePostModal';
 import { Feed } from '@/features/post/components/Feed';
+import { PostGridItem } from '@/features/posts/components/PostGridItem';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import { NDKImage, NDKKind, useSubscribe } from '@nostr-dev-kit/ndk-hooks';
-import { useMemo } from 'react';
+import {
+    Hexpubkey,
+    NDKEvent,
+    NDKFilter,
+    NDKFollowPack,
+    NDKImage,
+    NDKKind,
+    NDKSubscriptionCacheUsage,
+    useSubscribe,
+} from '@nostr-dev-kit/ndk-hooks';
+import { useMemo, useState } from 'react';
 
 export default function Home() {
-    const { events } = useSubscribe<NDKImage>([{ kinds: [NDKKind.Image], limit: 50 }], { wrap: true });
+    const [authors, setAuthors] = useState<Hexpubkey[] | false>(false);
+    const filters = useMemo(() => {
+        const filter: NDKFilter = { kinds: [NDKKind.Image], limit: 50 };
+        if (authors) filter.authors = authors;
+        return [filter];
+    }, [authors]);
+    const { events } = useSubscribe<NDKImage>(
+        filters,
+        { wrap: true, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, groupable: false },
+        [filters]
+    );
+    const [openPost, setOpenPost] = useState<NDKEvent | null>(null);
 
     const hashtags = useMemo(() => {
         const allTags = events
@@ -47,11 +68,15 @@ export default function Home() {
         };
     });
 
+    function handleFollowPackClick(event: NDKFollowPack) {
+        setAuthors(event.pubkeys);
+    }
+
     return (
         <main className="w-full flex flex-col items-center">
-            {/* Image Grid Section */}
-            <section className="image-grid-section w-full">
-                <div className="h-[20vh] overflow-clip">
+            <FollowPacks onClick={handleFollowPackClick} />
+            {/* <section className="flex flex-col image-grid-section w-full h-screen">
+                <div className="h-[calc(100vh-500px)] !w-screen overflow-clip">
                     <ImageList
                         sx={{ height: 'auto', minHeight: 450 }}
                         variant="quilted"
@@ -61,34 +86,46 @@ export default function Home() {
                     >
                         {itemData.map((item) => (
                             <ImageListItem key={item.id} cols={item.cols || 1} rows={item.rows || 1}>
-                                {item.img && (
-                                    <a href={`/p/${item.event.author.npub}`}>
-                                        <img
-                                            src={item.img}
-                                            width={121 * (item.cols || 1)}
-                                            height={121 * (item.rows || 1)}
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            loading="lazy"
-                                            className="object-cover w-full h-full"
-                                        />
-                                    </a>
-                                )}
+                                <PostGridItem
+                                    event={item.event}
+                                    width={121 * (item.cols || 1)}
+                                    height={121 * (item.rows || 1)}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    onClick={() => setOpenPost(item.event)}
+                                />
                             </ImageListItem>
                         ))}
                     </ImageList>
+
                 </div>
-            </section>
+            </section> */}
+
+            {openPost && <ImagePostModal isOpen={true} onClose={() => setOpenPost(null)} event={openPost} />}
 
             {/* New Feed Area */}
             <section className="feed-area mt-8 flex flex-col lg:flex-row w-full max-w-7xl">
                 <div className="new-sidebar-column w-full lg:w-1/5"></div>
-                <div className="feed-column w-full lg:w-1/2 border border-r-0 border-border">
-                    <Feed />
+                <div className="feed-column w-full lg:w-1/2 border border-border">
+                    <Feed events={events} onClick={(event) => setOpenPost(event)} />
                 </div>
-                <div className="new-sidebar-column w-full lg:w-1/4 border border-border">
+                <div className="new-sidebar-column w-full lg:w-1/4">
                     <FeedSidebar hashtags={hashtags} />
                 </div>
             </section>
         </main>
+    );
+}
+
+function FollowPacks({ onClick }: { onClick: (event: NDKFollowPack) => void }) {
+    const { events } = useSubscribe<NDKFollowPack>([{ kinds: [NDKKind.FollowPack], limit: 10 }], { wrap: true });
+
+    return (
+        <div className="flex flex-row gap-4 overflow-x-auto w-full my-8">
+            {events.map((event) => (
+                <button key={event.id} className="w-[300px] flex-none" onClick={() => onClick(event)}>
+                    <FollowPackCard event={event} />
+                </button>
+            ))}
+        </div>
     );
 }

@@ -1,6 +1,8 @@
 'use client';
 
+import { FollowPackCard } from '@/features/follow-packs/components/FollowPackCard';
 import { TrendingHashtags } from '@/features/sidebar/components/TrendingHashtags';
+import { NDKFollowPack, NDKKind, useSubscribe } from '@nostr-dev-kit/ndk-hooks';
 
 interface FeedSidebarProps {
     hashtags: string[];
@@ -9,10 +11,9 @@ interface FeedSidebarProps {
 export function FeedSidebar({ hashtags }: FeedSidebarProps) {
     return (
         <aside className="flex flex-col gap-6">
-            <div className="rounded-xl h-screen sticky top-0 p-4">
+            <div className="sticky top-0 px-4">
                 <TrendingHashtags hashtags={hashtags} />
             </div>
-            {/* Future sidebar boxes can be added here, each wrapped in a similar styled div */}
         </aside>
     );
 }

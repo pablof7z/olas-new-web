@@ -3,11 +3,13 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import type { NDKEvent, NDKImage } from '@nostr-dev-kit/ndk';
 import { useProfileValue } from '@nostr-dev-kit/ndk-hooks';
+import { EventContent } from 'features/nostr/components/EventContent';
 import Link from 'next/link';
 import * as React from 'react';
 
 interface PostCardProps {
     event: NDKImage;
+    onClick?: (event: NDKEvent) => void;
 }
 
 function formatTimestamp(ts: number): string {
@@ -22,9 +24,10 @@ function formatTimestamp(ts: number): string {
 
 interface ImageCarouselProps {
     imetas: { url?: string }[];
+    onClick?: (event: NDKEvent) => void;
 }
 
-function ImageCarousel({ imetas }: ImageCarouselProps) {
+function ImageCarousel({ imetas, onClick }: ImageCarouselProps) {
     const [activeIdx, setActiveIdx] = React.useState(0);
 
     // Only show valid images, and assert url is always present
@@ -35,12 +38,19 @@ function ImageCarousel({ imetas }: ImageCarouselProps) {
     return (
         <div className="mt-2 flex flex-col items-center">
             <div className="relative w-full flex justify-center">
-                <img
-                    src={images[activeIdx]!.url}
-                    alt={`Post image ${activeIdx + 1}`}
-                    className="rounded-lg max-h-[400px] w-full object-cover transition-all duration-300 shadow-lg"
-                    style={{ aspectRatio: '16/9', objectFit: 'cover' }}
-                />
+                <button
+                    className="absolute top-0 left-0 w-full h-full bg-black/40 hover:bg-black/70 transition"
+                    onClick={() => onClick?.(images[activeIdx])}
+                    type="button"
+                    aria-label={`Open image ${activeIdx + 1}`}
+                >
+                    <img
+                        src={images[activeIdx]!.url}
+                        alt={`Post image ${activeIdx + 1}`}
+                        className="rounded-lg max-h-[800px] w-full object-cover transition-all duration-300 shadow-lg"
+                        style={{ aspectRatio: '16/9', objectFit: 'cover' }}
+                    />
+                </button>
                 {images.length > 1 && (
                     <>
                         <button
@@ -112,7 +122,7 @@ function ImageCarousel({ imetas }: ImageCarouselProps) {
     );
 }
 
-export function PostCard({ event }: PostCardProps) {
+export function PostCard({ event, onClick }: PostCardProps) {
     const user = event.author;
     const pubkey = event.pubkey;
     const profile = useProfileValue(pubkey);
@@ -127,19 +137,22 @@ export function PostCard({ event }: PostCardProps) {
                     <span className="font-medium truncate">{profile?.displayName || profile?.name || user?.npub}</span>
                     <span className="text-xs text-muted-foreground">· {formatTimestamp(event.created_at)}</span>
                 </div>
-                <div className="mt-1 whitespace-pre-line break-words text-sm">{event.content}</div>
 
                 {event.imetas?.length > 1 ? (
-                    <ImageCarousel imetas={event.imetas} />
+                    <ImageCarousel imetas={event.imetas} onClick={() => onClick?.(event)} />
                 ) : event.imetas?.[0]?.url ? (
-                    <div className="mt-2">
+                    <button className="mt-2" onClick={() => onClick?.(event)} type="button">
                         <img
                             src={event.imetas[0].url}
                             alt="Post image"
-                            className="rounded-lg max-h-[400px] w-full object-cover"
+                            className="rounded-lg max-h-[800px] w-full object-cover"
                         />
-                    </div>
+                    </button>
                 ) : null}
+
+                <div className="mt-4 whitespace-pre-line break-words">
+                    <EventContent content={event.content} />
+                </div>
 
                 <div className="flex gap-4 mt-3 text-muted-foreground text-xs">
                     <button className="hover:text-primary transition-colors" title="Reply" type="button">

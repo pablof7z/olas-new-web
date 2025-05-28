@@ -23,9 +23,10 @@ export function ProfileHero({ profile, pubkey, npub, containerClassName }: Profi
                 style={bannerUrl ? { backgroundImage: `url(${bannerUrl})` } : {}}
             >
                 {!bannerUrl && (
-                    <div className="flex items-center justify-center h-full">
-                        <span className="text-gray-500 dark:text-gray-400">No banner</span>
-                    </div>
+                    <div
+                        className="flex items-center justify-center h-full"
+                        style={{ backgroundColor: `#${pubkey.substring(0, 6)}` }}
+                    ></div>
                 )}
             </div>
 

@@ -2,12 +2,15 @@
 
 // Required for useRef
 import { Sidebar } from '@/features/navigation/components/Sidebar';
+import { cn } from '@/lib/utils';
 import { NDKCacheAdapterSqliteWasm } from '@nostr-dev-kit/ndk-cache-sqlite-wasm';
 import { NDKHeadless, NDKSessionLocalStorage, useNDK } from '@nostr-dev-kit/ndk-hooks';
 import { Inter } from 'next/font/google';
 import { cache, useEffect, useRef } from 'react';
 import './globals.css';
+import { shellExpandedAtom } from '@/features/app/stores/state';
 import { ThemeProvider } from '@/features/navigation/components/ThemeProvider';
+import { useAtomValue } from 'jotai';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,6 +20,7 @@ const inter = Inter({ subsets: ['latin'] });
 const explicitRelayUrls = ['wss://relay.primal.net', 'wss://purplepag.es', 'wss://relay.nostr.band'];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const shellExpanded = useAtomValue(shellExpandedAtom);
     const sessionStorage = useRef(new NDKSessionLocalStorage());
     const cacheAdapterRef = useRef(
         new NDKCacheAdapterSqliteWasm({
@@ -30,14 +34,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     useEffect(() => {
         if (ndk) {
             cacheAdapterRef.current.initialize().then(() => {
-                ndk.cacheAdapter = cacheAdapterRef.current;
+                // ndk.cacheAdapter = cacheAdapterRef.current;
             });
         }
     }, [ndk]);
 
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body
+                className={cn(
+                    inter.className,
+                    'transition-all duration-300',
+                    shellExpanded ? 'mt-16 bg-[#f1f1f1]' : 'mt-0 bg-[#fdfdfd]'
+                )}
+            >
                 <ThemeProvider>
                     <NDKHeadless
                         ndk={{
@@ -49,7 +59,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         }}
                     />
                     <Sidebar />
-                    <main className="ml-16">{children}</main>
+                    <main
+                        className={cn(
+                            'transition-all duration-300 overflow-clip bg-white',
+                            shellExpanded ? 'rounded-t-3xl ml-48  shadow-lg' : 'mt-0 ml-16'
+                        )}
+                    >
+                        {children}
+                    </main>
                 </ThemeProvider>
             </body>
         </html>

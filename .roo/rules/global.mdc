@@ -13,7 +13,7 @@ Code Style and Structure:
 - Structure files: exported component, subcomponents, helpers, static content, types.
 
 Naming Conventions:
-- Use lowercase with dashes for directories (e.g., components/auth-wizard).
+- Use lowercase with dashes for directories
 - Favor named exports for components.
 
 TypeScript specific:

@@ -1,10 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { CommentInput } from '@/features/comment-input/components/CommentInput';
 import { NDKEvent, NDKImage } from '@nostr-dev-kit/ndk';
 import { useProfileValue, useSubscribe } from '@nostr-dev-kit/ndk-hooks';
+import { EventContent } from 'features/nostr/components/EventContent';
 import { Heart, MessageCircle, Repeat2, Share2, X } from 'lucide-react';
+import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { CommentCard } from './CommentCard';
@@ -119,7 +120,7 @@ export function ImagePostModal({ isOpen, onClose, event }: ImagePostModalProps) 
                     p-4
                 "
             >
-                <div className="flex items-center mb-4.5">
+                <Link className="flex items-center mb-4.5" href={`/p/${event.author.npub}`} onClick={onClose}>
                     <UserAvatar pubkey={event.pubkey} className="h-10 w-10" />
                     <div className="ml-3">
                         <div
@@ -143,8 +144,10 @@ export function ImagePostModal({ isOpen, onClose, event }: ImagePostModalProps) 
                             </div>
                         )}
                     </div>
+                </Link>
+                <div className="text-lg mb-4.5 break-words">
+                    <EventContent content={event.content} />
                 </div>
-                {event.content && <div className="text-lg mb-4.5 break-words">{event.content}</div>}
                 <div className="text-[13px] mb-4.5">{timestamp}</div>
                 <div className="flex gap-5 mb-4.5 items-center border-y border-muted py-3 -mx-4 px-4">
                     <span

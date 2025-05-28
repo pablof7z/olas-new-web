@@ -1,7 +1,11 @@
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { shellExpandedAtom } from '@/features/app/stores/state';
 import LoginComponent from '@/features/login/components/login-component';
+import { useAtom } from 'jotai';
+import { Moon, MoonIcon, PlusCircle, Sun } from 'lucide-react';
 import Link from 'next/link';
+import { useCallback, useState } from 'react';
+import { PostEditorModal } from '../../post-editor/components/modal';
 import { useTheme } from './ThemeProvider';
 
 function OlasIcon() {
@@ -22,16 +26,41 @@ function OlasIcon() {
     );
 }
 
+function ToggleShellExpandedButton() {
+    const [isExpanded, setIsExpanded] = useAtom(shellExpandedAtom);
+
+    const handleClick = useCallback(() => {
+        setIsExpanded(!isExpanded);
+    }, [isExpanded]);
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="!p-0"
+            aria-label={isExpanded ? 'Collapse shell' : 'Expand shell'}
+            onClick={handleClick}
+        >
+            {isExpanded ? (
+                <Sun className="!w-8 !h-8" strokeWidth={1.5} />
+            ) : (
+                <MoonIcon className="!w-8 !h-8" strokeWidth={1.5} />
+            )}
+        </Button>
+    );
+}
+
 export function Sidebar() {
     const { theme, toggleTheme } = useTheme();
+    const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
 
     return (
         <aside
-            className="flex flex-col h-screen w-16 bg-background border-r items-center justify-between py-4 fixed left-0 top-0 z-40"
+            className="flex flex-col h-screen w-16 items-center justify-between py-4 fixed left-0 top-0 z-40"
             aria-label="Sidebar"
         >
             {/* Top: Olas Icon */}
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4 w-full">
                 <div className="mb-2">
                     <OlasIcon />
                 </div>
@@ -47,64 +76,31 @@ export function Sidebar() {
                         <polygon points="12,7 15,17 12,15 9,17" fill="currentColor" />
                     </svg>
                 </Link>
-                {/* New Post button (noop) */}
-                <Button variant="ghost" size="icon" className="w-10 h-10" aria-label="Create new post" tabIndex={0}>
-                    {/* Plus icon */}
-                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" />
-                        <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" />
-                        <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" />
-                    </svg>
+                {/* New Post button */}
+                <Button
+                    variant="default"
+                    aria-label="Create new post"
+                    className="w-12 h-12"
+                    tabIndex={0}
+                    onClick={() => setIsPostEditorOpen(true)}
+                >
+                    <PlusCircle className="!w-8 !h-8 text-primary-foreground" strokeWidth={1.5} />
                 </Button>
-                {/* Theme toggle button */}
+                <PostEditorModal isOpen={isPostEditorOpen} onOpenChange={setIsPostEditorOpen} />
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="w-10 h-10"
+                    className="!p-0"
                     aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                     onClick={toggleTheme}
                 >
                     {theme === 'dark' ? (
-                        // Sun icon
-                        <svg
-                            width="24"
-                            height="24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            aria-hidden="true"
-                        >
-                            <circle cx="12" cy="12" r="5" stroke="currentColor" />
-                            <g>
-                                <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" />
-                                <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" />
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" />
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" />
-                                <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" />
-                                <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" />
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" />
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" />
-                            </g>
-                        </svg>
+                        <Sun className="!w-8 !h-8" strokeWidth={1.5} />
                     ) : (
-                        // Moon icon
-                        <svg
-                            width="24"
-                            height="24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                fill="none"
-                            />
-                        </svg>
+                        <MoonIcon className="!w-8 !h-8" strokeWidth={1.5} />
                     )}
                 </Button>
+                {/* <ToggleShellExpandedButton /> */}
             </div>
             {/* Bottom: Avatar (noop for now) */}
             <div className="mb-2">
